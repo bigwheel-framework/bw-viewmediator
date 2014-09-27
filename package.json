@@ -1,0 +1,27 @@
+{
+  "name": "bw-viewmediator",
+  "version": "1.0.0",
+  "description": "bigwheel can handle multiple render engines this module helps. Pass multiple view items to act as one",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MikkoH/bw-viewmediator.git"
+  },
+  "keywords": [
+    "bigwheel",
+    "view",
+    "mediator"
+  ],
+  "author": "Mikko Haapoja <me@mikkoh.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MikkoH/bw-viewmediator/issues"
+  },
+  "homepage": "https://github.com/MikkoH/bw-viewmediator"
+}
