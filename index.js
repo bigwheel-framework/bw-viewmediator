@@ -12,7 +12,7 @@ function mediator() {
 
 mediator.prototype = {
 
-	init: function( onComplete ) {
+	init: function( data, onComplete ) {
 
 		var numInit = 0,
 			numToInit = 0,
@@ -36,7 +36,7 @@ mediator.prototype = {
 		for( var i = 0; i < numItem; i++ ) {
 
 			if( typeof this.items[ i ].init == 'function' )
-				this.items[ i ].init( onInit );
+				this.items[ i ].init( data, onInit );
 		}
 	},
 
