@@ -61,17 +61,25 @@ mediator.prototype = {
 
 	doAni: function( func, onComplete ) {
 
-		var numAni = 0,
-			numItem = this.items.length,
+		var numAni = numItem = 0,
 			onAni = function() {
 
 				if( ++numAni == numItem )
 					onComplete();
 			};
 
-		for( var i = 0; i < numItem; i++ ) {
+		// we need to do two loops here just in case onComplete gets called immediately
+		for( var i = 0, len = this.items.length; i < len; i++ ) {
 
-			this.items[ i ][ func ]( onAni );
+			if( typeof this.items[ i ][ func ] == 'function' )
+				numItem++;
+		}
+
+		// now call the animate in functions
+		for( var i = 0, len = this.items.length; i < len; i++ ) {
+
+			if( typeof this.items[ i ][ func ] == 'function' )
+				this.items[ i ][ func ]( onAni );
 		}
 	},
 
