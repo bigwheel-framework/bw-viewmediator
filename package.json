@@ -1,6 +1,6 @@
 {
   "name": "bw-viewmediator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "bigwheel can handle multiple render engines this module helps. Pass multiple view items to act as one",
   "main": "index.js",
   "directories": {
