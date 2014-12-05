@@ -49,17 +49,15 @@ mediator.prototype = {
 		}
 	},
 
-	aniIn: function( onComplete ) {
-
-		this.doAni( 'aniIn', onComplete );		
+	aniIn: function( data, onComplete ) {
+		this.doAni( 'aniIn', data, onComplete );		
 	},
 
-	aniOut: function( onComplete ) {
-
-		this.doAni( 'aniOut', onComplete );
+	aniOut: function( data, onComplete ) {
+		this.doAni( 'aniOut', data, onComplete );
 	},
 
-	doAni: function( func, onComplete ) {
+	doAni: function( func, data, onComplete ) {
 
 		var numAni = numItem = 0,
 			onAni = function() {
@@ -79,16 +77,29 @@ mediator.prototype = {
 		for( var i = 0, len = this.items.length; i < len; i++ ) {
 
 			if( typeof this.items[ i ][ func ] == 'function' )
-				this.items[ i ][ func ]( onAni );
+				this.items[ i ][ func ]( data, onAni );
 		}
 	},
 
-	destroy: function() {
+	destroy: function(data, onComplete) {
+
+		var numDestroy = numItem = 0,
+			onDestroy = function() {
+
+			if( ++numDestroy == numItem )
+				onComplete();
+		};
 
 		for( var i = 0, len = this.items.length; i < len; i++ ) {
 
-			if( typeof this.items[ i ].destroy == 'function' )
-				this.items[ i ].destroy();
+			if( typeof this.items[ i ].destroy == 'function' ) 
+				numItem++;
+		}
+
+		for( var i = 0, len = this.items.length; i < len; i++ ) {
+
+			if( typeof this.items[ i ].destroy == 'function' ) 
+				this.items[ i ].destroy(data, onDestroy);
 		}
 	}
 };
