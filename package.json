@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/MikkoH/bw-viewmediator/issues"
   },
-  "homepage": "https://github.com/MikkoH/bw-viewmediator"
+  "homepage": "https://github.com/MikkoH/bw-viewmediator",
+  "devDependencies": {
+    "tape": "^3.5.0"
+  }
 }

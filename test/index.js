@@ -1,33 +1,40 @@
+var test = require('tape');
 var mediator = require( '../' );
+
+var sectionsInited = [];
+var sectionsResized = [];
+var sectionsAnimatedIn = [];
+var sectionsAnimatedOut = [];
+var sectionsDestroyed = [];
 
 var Content = {
 
-	init: function( onComplete ) {
+	init: function( data, onComplete ) {
 
-		console.log( 'init', this.name );	
+		sectionsInited.push(this.name);
 		onComplete();
 	},
 
 	resize: function( w, h ) {
 
-		console.log( 'resize', this.name, w, h );
+		sectionsResized.push(this.name);
 	},
 
-	aniIn: function( onComplete ) {
+	animateIn: function( data, onComplete ) {
 
-		console.log( 'aniIn', this.name );
+		sectionsAnimatedIn.push(this.name);
 		onComplete();
 	},
 
-	aniOut: function( onComplete ) {
+	animateOut: function( data, onComplete ) {
 
-		console.log( 'aniOut', this.name );
+		sectionsAnimatedOut.push(this.name);
 		onComplete();
 	},
 
-	destroy: function() {
+	destroy: function( data, onComplete ) {
 
-		console.log( 'destroyed', this.name );
+		sectionsDestroyed.push(this.name);
 	}
 };
 
@@ -43,18 +50,25 @@ c3.name = 'c3';
 c2.init = undefined;
 c2.destroy = undefined;
 
-var combined = mediator( c1, c2, c3 );
+test('creating view mediator and calling its functions', function(t) {
 
-combined.init( function() {
+	t.plan(4);
 
-	console.log( '---INIT COMPLETE' );
+	var combined = mediator( c1, c2, c3 );
+
+	combined.init( null, function() {
+
+		t.deepEqual(sectionsInited, ['c1', 'c3'], 'All sections inited');
+	});
+	combined.animateIn( null, function() {
+
+		t.deepEqual(sectionsAnimatedIn, ['c1', 'c2', 'c3'], 'All sections animated in');
+	});
+	combined.animateOut( null, function() {
+
+		t.deepEqual(sectionsAnimatedOut, ['c1', 'c2', 'c3'], 'All sections animated out');
+	});
+	combined.destroy( null, function() {} );
+
+	t.deepEqual(sectionsDestroyed, ['c1', 'c3'], 'All sections destroyed');
 });
-combined.aniIn( function() {
-
-	console.log( '---ANIIN COMPLETE' );
-});
-combined.aniOut( function() {
-
-	console.log( '---ANIOUT COMPLETE' );
-});
-combined.destroy();
