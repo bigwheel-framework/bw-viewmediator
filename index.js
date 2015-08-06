@@ -1,125 +1,78 @@
 function mediator() {
 
-  if( !( this instanceof mediator ) ) {
+  if(!( this instanceof mediator )) {
 
-    var rVal = Object.create( mediator.prototype );
-    mediator.apply( rVal, arguments );
+    var rVal = Object.create(mediator.prototype);
+    mediator.apply(rVal, arguments);
     return rVal;
   }
 
-  this.items = arguments;
+  this.items = Array.prototype.slice.call(arguments);
 }
 
 mediator.prototype = {
 
-  init: function( data, onComplete ) {
+  init: function(data, done) {
+    this.callAll('init', data, done);
+  },
 
-    var numInit = 0;
-    var numItem = 0;
-    var onInit = function() {
+  resize: function(w, h) {
 
-      if( ++numInit === numItem ) {
+    for(var i = 0, len = this.items.length; i < len; i++) {
 
-        onComplete();
+      if(typeof this.items[ i ].resize === 'function') {
+        this.items[ i ].resize(w, h);
       }
-    };
+    }
+  },
+
+  animateIn: function(data, done) {
+    this.callAll('animateIn', data, done);    
+  },
+
+  animateOut: function(data, done) {
+    this.callAll('animateOut', data, done);
+  },
+
+  destroy: function(data, done) {
+    this.callAll('destroy', data, done);
+  },
+
+  callAll: function(func, data, done) {
+
+    var numCalled = 0;
+    var numToCall = 0;
     var i;
     var len;
 
-    // the following needs to be done in two for loops
-    // because init may complete immediately
-    // looks odd but it's needed
-    for( i = 0, len = this.items.length; i < len; i++ ) {
+    this.items.forEach(function(section) {
 
-      if( typeof this.items[ i ].init === 'function' ) {
-        numItem++;
+      if(typeof section[ func ] === 'function') {
+        numToCall++;
       }
+    });
+
+    // if there are no functions to call simply just return
+    if(numToCall === 0) {
+
+      done();
+    } else {
+
+      this.items.forEach(function(section) {
+
+        if(typeof section[ func ] === 'function') {
+          section[ func ].call(section, data, onSectionDone);
+        }
+      });
     }
 
-    // now finally do the initialization
-    for( i = 0, len = this.items.length; i < len; i++ ) {
+    function onSectionDone() {
 
-      if( typeof this.items[ i ].init === 'function' ) {
-        this.items[ i ].init( data, onInit );
-      }
-    }
-  },
-
-  resize: function( w, h ) {
-
-    for( var i = 0, len = this.items.length; i < len; i++ ) {
-
-      if( typeof this.items[ i ].resize === 'function' ) {
-        this.items[ i ].resize( w, h );
-      }
-    }
-  },
-
-  animateIn: function( data, onComplete ) {
-    this.doAni( 'animateIn', data, onComplete );    
-  },
-
-  animateOut: function( data, onComplete ) {
-    this.doAni( 'animateOut', data, onComplete );
-  },
-
-  doAni: function( func, data, onComplete ) {
-
-    var numAni = 0;
-    var numItem = 0;
-    var onAni = function() {
-
-      if( ++numAni === numItem )
-        onComplete();
-    };
-    var i;
-    var len;
-
-    // we need to do two loops here just in case onComplete gets called immediately
-    for( i = 0, len = this.items.length; i < len; i++ ) {
-
-      if( typeof this.items[ i ][ func ] === 'function' ) {
-        numItem++;
-      }
-    }
-
-    // now call the animate in functions
-    for( i = 0, len = this.items.length; i < len; i++ ) {
-
-      if( typeof this.items[ i ][ func ] === 'function' ) {
-        this.items[ i ][ func ]( data, onAni );
-      }
-    }
-  },
-
-  destroy: function(data, onComplete) {
-
-    var numDestroy = 0;
-    var numItem = 0;
-    var onDestroy = function() {
-
-      if( ++numDestroy === numItem ) {
-        onComplete();
-      }
-    };
-    var i;
-    var len;
-
-    for( i = 0, len = this.items.length; i < len; i++ ) {
-
-      if( typeof this.items[ i ].destroy === 'function' ) {
-        numItem++;
-      }
-    }
-
-    for( i = 0, len = this.items.length; i < len; i++ ) {
-
-      if( typeof this.items[ i ].destroy === 'function' ) {
-        this.items[ i ].destroy(data, onDestroy);
+      if(++numCalled === numToCall) {
+        done();
       }
     }
   }
 };
-
 
 module.exports = mediator;

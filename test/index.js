@@ -1,5 +1,5 @@
 var test = require('tape');
-var mediator = require( '../' );
+var mediator = require('../');
 
 var sectionsInited = [];
 var sectionsResized = [];
@@ -9,39 +9,39 @@ var sectionsDestroyed = [];
 
 var Content = {
 
-	init: function( data, onComplete ) {
+	init: function(data, done) {
 
 		sectionsInited.push(this.name);
-		onComplete();
+		done();
 	},
 
-	resize: function( w, h ) {
+	resize: function(w, h) {
 
 		sectionsResized.push(this.name);
 	},
 
-	animateIn: function( data, onComplete ) {
+	animateIn: function(data, done) {
 
 		sectionsAnimatedIn.push(this.name);
-		onComplete();
+		done();
 	},
 
-	animateOut: function( data, onComplete ) {
+	animateOut: function(data, done) {
 
 		sectionsAnimatedOut.push(this.name);
-		onComplete();
+		done();
 	},
 
-	destroy: function( data, onComplete ) {
+	destroy: function(data, done) {
 
 		sectionsDestroyed.push(this.name);
 	}
 };
 
 
-var c1 = Object.create( Content );
-var c2 = Object.create( Content );
-var c3 = Object.create( Content );
+var c1 = Object.create(Content);
+var c2 = Object.create(Content);
+var c3 = Object.create(Content);
 
 c1.name = 'c1';
 c2.name = 'c2';
@@ -54,21 +54,21 @@ test('creating view mediator and calling its functions', function(t) {
 
 	t.plan(4);
 
-	var combined = mediator( c1, c2, c3 );
+	var combined = mediator(c1, c2, c3);
 
-	combined.init( null, function() {
+	combined.init(null, function() {
 
 		t.deepEqual(sectionsInited, ['c1', 'c3'], 'All sections inited');
 	});
-	combined.animateIn( null, function() {
+	combined.animateIn(null, function() {
 
 		t.deepEqual(sectionsAnimatedIn, ['c1', 'c2', 'c3'], 'All sections animated in');
 	});
-	combined.animateOut( null, function() {
+	combined.animateOut(null, function() {
 
 		t.deepEqual(sectionsAnimatedOut, ['c1', 'c2', 'c3'], 'All sections animated out');
 	});
-	combined.destroy( null, function() {} );
+	combined.destroy(null, function() {});
 
 	t.deepEqual(sectionsDestroyed, ['c1', 'c3'], 'All sections destroyed');
 });
