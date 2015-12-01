@@ -39,15 +39,10 @@ mediator.prototype = {
   },
 
   clear: function(done) {
-    this.callAll('clear', done);
+    this.callAll('clear', data, done);
   },
 
   callAll: function(func, data, done) {
-
-    if (!done && typeof data==='function') {
-      done = data;
-      data = undefined;
-    }
 
     var numCalled = 0;
     var numToCall = 0;
@@ -70,11 +65,7 @@ mediator.prototype = {
       this.items.forEach(function(section) {
 
         if(typeof section[ func ] === 'function') {
-          if (data) {
-            section[ func ].call(section, data, onSectionDone);
-          } else {
-            section[ func ].call(section, onSectionDone);
-          }
+          section[ func ].call(section, data, onSectionDone);
         }
       });
     }
