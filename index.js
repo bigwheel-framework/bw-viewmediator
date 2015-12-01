@@ -38,7 +38,16 @@ mediator.prototype = {
     this.callAll('destroy', data, done);
   },
 
+  clear: function(done) {
+    this.callAll('clear', done);
+  },
+
   callAll: function(func, data, done) {
+
+    if (!done && typeof data==='function') {
+      done = data;
+      data = undefined;
+    }
 
     var numCalled = 0;
     var numToCall = 0;
@@ -61,13 +70,16 @@ mediator.prototype = {
       this.items.forEach(function(section) {
 
         if(typeof section[ func ] === 'function') {
-          section[ func ].call(section, data, onSectionDone);
+          if (data) {
+            section[ func ].call(section, data, onSectionDone);
+          } else {
+            section[ func ].call(section, onSectionDone);
+          }
         }
       });
     }
 
     function onSectionDone() {
-
       if(++numCalled === numToCall) {
         done();
       }
